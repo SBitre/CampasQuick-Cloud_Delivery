@@ -1,73 +1,218 @@
+/* OrderConfirmation.css - College Convenience Green Theme */
+
 .confirmation-container {
-  background: white;
-  padding: 60px 30px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  text-align: center;
-  max-width: 600px;
+  max-width: 500px;
   margin: 0 auto;
+  padding: 30px 20px;
 }
 
-.confirmation-icon {
-  font-size: 4rem;
-  margin-bottom: 20px;
+.confirmation-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  padding: 40px 30px;
+  text-align: center;
+  border-top: 4px solid #1a5e3a;
 }
 
-.confirmation-container h2 {
-  color: #667eea;
+/* Success Icon */
+.success-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #1a5e3a 0%, #2d8a5e 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 25px;
+  font-size: 2.5rem;
+  color: white;
+}
+
+/* Title */
+.confirmation-card h2 {
+  color: #1a5e3a;
   margin-bottom: 10px;
+  font-size: 1.8rem;
 }
 
 .confirmation-subtitle {
   color: #666;
-  font-size: 1.1rem;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
+  font-size: 1rem;
 }
 
+/* Order Details Box */
 .order-details {
-  background: #f9f9f9;
-  padding: 30px;
+  background: #f8f9fa;
   border-radius: 8px;
-  margin-bottom: 30px;
+  padding: 20px;
+  text-align: left;
+  margin-bottom: 25px;
 }
 
 .detail-row {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 15px;
-  font-size: 1.1rem;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.detail-row:last-child {
+  border-bottom: none;
 }
 
 .detail-label {
-  font-weight: 600;
-  color: #333;
+  color: #666;
+  font-weight: 500;
 }
 
 .detail-value {
-  color: #666;
+  color: #333;
+  font-weight: 600;
+  text-align: right;
 }
 
-.status-badge {
-  background: #667eea;
-  color: white;
-  padding: 4px 12px;
-  border-radius: 12px;
+.detail-value.order-id {
+  font-family: monospace;
   font-size: 0.9rem;
+  color: #1a5e3a;
+}
+
+.detail-value.total {
+  color: #1a5e3a;
+  font-size: 1.2rem;
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-block;
+  background: #fff3cd;
+  color: #856404;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
   text-transform: uppercase;
 }
 
+.status-badge.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-badge.accepted {
+  background: #cce5ff;
+  color: #004085;
+}
+
+.status-badge.picking {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.out_for_delivery {
+  background: #e2d5f1;
+  color: #563d7c;
+}
+
+.status-badge.delivered {
+  background: #d4edda;
+  color: #155724;
+}
+
+/* Delivery Estimate */
+.delivery-estimate {
+  background: #e8f5e9;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.delivery-estimate-icon {
+  font-size: 1.5rem;
+}
+
+.delivery-estimate-text {
+  color: #1a5e3a;
+  font-weight: 600;
+}
+
+/* New Order Button */
 .new-order-btn {
-  background: #667eea;
+  width: 100%;
+  background: linear-gradient(135deg, #1a5e3a 0%, #2d8a5e 100%);
   color: white;
   border: none;
-  padding: 15px 40px;
+  padding: 16px 30px;
   border-radius: 8px;
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: opacity 0.2s, transform 0.2s;
 }
 
 .new-order-btn:hover {
-  background: #5568d3;
+  opacity: 0.9;
+  transform: scale(1.01);
+}
+
+/* Track Order Button */
+.track-order-btn {
+  width: 100%;
+  background: none;
+  border: 2px solid #1a5e3a;
+  color: #1a5e3a;
+  padding: 14px 30px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.2s;
+}
+
+.track-order-btn:hover {
+  background: #1a5e3a;
+  color: white;
+}
+
+/* Items Ordered List */
+.items-ordered {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.items-ordered h4 {
+  color: #1a5e3a;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+}
+
+.ordered-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .confirmation-card {
+    padding: 30px 20px;
+  }
+
+  .success-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 2rem;
+  }
 }

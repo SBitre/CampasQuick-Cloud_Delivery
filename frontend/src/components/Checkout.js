@@ -3,7 +3,7 @@ import './Checkout.css';
 
 const API_BASE_URL = 'https://kz2amymiqd.execute-api.us-east-1.amazonaws.com/prod';
 
-function Checkout({ cart, onSuccess, onCancel }) {
+function Checkout({ cart, onSuccess, onCancel, userEmail }) {
   const [formData, setFormData] = useState({
     customerId: '',
     deliveryAddress: '',
@@ -26,7 +26,7 @@ function Checkout({ cart, onSuccess, onCancel }) {
 
     try {
       const orderData = {
-        customerId: formData.customerId || 'user_guest',
+       customerId: userEmail,
         items: cart.map(item => ({
           productId: item.productId,
           quantity: item.quantity
