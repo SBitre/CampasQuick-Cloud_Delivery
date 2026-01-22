@@ -7,6 +7,8 @@ import Checkout from './components/Checkout';
 import OrderConfirmation from './components/OrderConfirmation';
 import AuthComponent from './components/Auth';
 import AdminDashboard from './components/AdminDashboard';
+import RunnerDashboard from './components/RunnerDashboard';
+import MyOrders from './components/MyOrders';
 import SplashScreen from './components/SplashScreen';
 import awsconfig from './aws-config';
 
@@ -125,8 +127,9 @@ function App() {
     setView('products');
   };
 
-  // Check if user is admin
+  // Check user roles
   const isAdmin = userGroups.includes('admins');
+  const isRunner = userGroups.includes('runners');
 
   // Show splash screen first
   if (showSplash) {
@@ -162,23 +165,45 @@ function App() {
           <p>Fast delivery of essentials to your dorm in 20-30 minutes</p>
         </div>
         <div className="header-right">
-          {/* Navigation for Admin */}
-          {isAdmin && (
-            <nav className="admin-nav">
-              <button 
-                className={`nav-btn ${view === 'products' ? 'active' : ''}`}
-                onClick={() => setView('products')}
-              >
-                🛍️ Shop
-              </button>
+          {/* Navigation based on user role */}
+          <nav className="role-nav">
+            {/* Everyone can shop */}
+            <button 
+              className={`nav-btn ${view === 'products' || view === 'cart' || view === 'checkout' || view === 'confirmation' ? 'active' : ''}`}
+              onClick={() => setView('products')}
+            >
+              🛍️ Shop
+            </button>
+
+            {/* My Orders - for all users */}
+            <button 
+              className={`nav-btn ${view === 'myorders' ? 'active' : ''}`}
+              onClick={() => setView('myorders')}
+            >
+              📦 My Orders
+            </button>
+            
+            {/* Admin Dashboard */}
+            {isAdmin && (
               <button 
                 className={`nav-btn ${view === 'admin' ? 'active' : ''}`}
                 onClick={() => setView('admin')}
               >
                 📋 Admin
               </button>
-            </nav>
-          )}
+            )}
+            
+            {/* Runner Dashboard */}
+            {isRunner && (
+              <button 
+                className={`nav-btn ${view === 'runner' ? 'active' : ''}`}
+                onClick={() => setView('runner')}
+              >
+                🚴 Deliveries
+              </button>
+            )}
+          </nav>
+          
           <div className="header-user">
             <span>Welcome, {user.signInDetails?.loginId || user.username?.substring(0, 8) + '...'}</span>
             {userGroups.length > 0 && (
@@ -196,8 +221,21 @@ function App() {
         <AdminDashboard />
       )}
 
-      {/* Customer Views */}
-      {view !== 'admin' && (
+      {/* Runner Dashboard View */}
+      {view === 'runner' && isRunner && (
+        <RunnerDashboard userId={user.username} />
+      )}
+
+      {/* My Orders View */}
+      {view === 'myorders' && (
+        <MyOrders 
+          userId={user.username} 
+          onBackToShop={() => setView('products')}
+        />
+      )}
+
+      {/* Customer Shopping Views */}
+      {!['admin', 'runner', 'myorders'].includes(view) && (
         <>
           {cart.length > 0 && view !== 'confirmation' && (
             <div className="cart-badge" onClick={() => setView(view === 'cart' ? 'products' : 'cart')}>

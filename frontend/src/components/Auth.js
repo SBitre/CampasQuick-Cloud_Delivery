@@ -88,20 +88,26 @@ function AuthComponent({ onSignIn }) {
   if (needsPasswordChange) {
     return (
       <div className="auth-container">
-        <div className="auth-box">
-          <h2>Set New Password</h2>
-          <p>Please choose a new password to continue</p>
-          <form onSubmit={handleNewPasswordSubmit}>
-            <input
-              type="password"
-              placeholder="New Password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-              minLength="8"
-            />
-            {error && <div className="error-message">{error}</div>}
-            <button type="submit" disabled={loading}>
+        <div className="auth-card">
+          <div className="auth-header">
+            <div className="auth-logo">🔐</div>
+            <h1>Set New Password</h1>
+            <p>Please choose a new password to continue</p>
+          </div>
+          <form onSubmit={handleNewPasswordSubmit} className="auth-form">
+            <div className="form-group">
+              <label>New Password</label>
+              <input
+                type="password"
+                placeholder="Enter new password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+                minLength="8"
+              />
+            </div>
+            {error && <div className="auth-error">{error}</div>}
+            <button type="submit" className="auth-submit-btn" disabled={loading}>
               {loading ? 'Setting Password...' : 'Set Password'}
             </button>
           </form>
@@ -112,49 +118,90 @@ function AuthComponent({ onSignIn }) {
 
   return (
     <div className="auth-container">
-      <div className="auth-box">
-        <h2>{isSignUp ? 'Sign Up' : 'Sign In'}</h2>
-        <form onSubmit={isSignUp ? handleSignUp : handleSignIn}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength="8"
-          />
-          {isSignUp && (
+      <div className="auth-card">
+        <div className="auth-header">
+          <div className="auth-logo">🛒</div>
+          <h1>CampusQuick</h1>
+          <p>Fast delivery to your dorm in 20-30 minutes</p>
+        </div>
+
+        <div className="auth-tabs">
+          <button 
+            className={`auth-tab ${!isSignUp ? 'active' : ''}`}
+            onClick={() => setIsSignUp(false)}
+          >
+            Sign In
+          </button>
+          <button 
+            className={`auth-tab ${isSignUp ? 'active' : ''}`}
+            onClick={() => setIsSignUp(true)}
+          >
+            Sign Up
+          </button>
+        </div>
+
+        <form onSubmit={isSignUp ? handleSignUp : handleSignIn} className="auth-form">
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Password</label>
             <input
               type="password"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
               minLength="8"
             />
+          </div>
+
+          {isSignUp && (
+            <div className="form-group">
+              <label>Confirm Password</label>
+              <input
+                type="password"
+                placeholder="Confirm your password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                minLength="8"
+              />
+            </div>
           )}
-          {error && <div className="error-message">{error}</div>}
-          <button type="submit" disabled={loading}>
-            {loading ? 'Loading...' : (isSignUp ? 'Sign Up' : 'Sign In')}
+
+          {error && <div className="auth-error">{error}</div>}
+
+          <button type="submit" className="auth-submit-btn" disabled={loading}>
+            {loading ? 'Please wait...' : (isSignUp ? 'Create Account' : 'Sign In')}
           </button>
         </form>
-        <p className="toggle-auth">
-          {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-          <button onClick={() => setIsSignUp(!isSignUp)} className="link-button">
-            {isSignUp ? 'Sign In' : 'Sign Up'}
-          </button>
-        </p>
-        <div className="test-credentials">
-          <p><strong>Test Accounts:</strong></p>
-          <p>Customer: customer@test.com / Test123!</p>
-          <p>Admin: admin@test.com / Admin123!</p>
+
+        <div className="auth-divider">
+          <span>Test Accounts</span>
+        </div>
+
+        <div className="test-accounts">
+          <div className="test-account">
+            <span className="account-type">👤 Customer:</span>
+            <span className="account-creds">customer@test.com / Test123!</span>
+          </div>
+          <div className="test-account">
+            <span className="account-type">👔 Admin:</span>
+            <span className="account-creds">admin@test.com / Admin123!</span>
+          </div>
+          <div className="test-account">
+            <span className="account-type">🚴 Runner:</span>
+            <span className="account-creds">runner@test.com / Runner123!</span>
+          </div>
         </div>
       </div>
     </div>
