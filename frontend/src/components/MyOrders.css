@@ -266,6 +266,41 @@
   border-radius: 8px;
 }
 
+/* Map Toggle Section */
+.map-toggle-section {
+  padding: 10px 20px;
+  background: #f8f9fa;
+  border-top: 1px solid #eee;
+  text-align: center;
+}
+
+.map-toggle-btn {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.map-toggle-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.map-toggle-btn.active {
+  background: linear-gradient(135deg, #1a5e3a 0%, #2d8a5e 100%);
+}
+
+/* Map Container */
+.order-map-container {
+  padding: 15px 20px;
+  border-top: 1px solid #eee;
+}
+
 /* Order Details (Expanded) */
 .order-details {
   padding: 20px;

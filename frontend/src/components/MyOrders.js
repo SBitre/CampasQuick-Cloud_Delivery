@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import OrderTrackingMap from './OrderTrackingMap';
 import './MyOrders.css';
 
 const API_BASE_URL = 'https://kz2amymiqd.execute-api.us-east-1.amazonaws.com/prod';
@@ -8,6 +9,7 @@ function MyOrders({ userId, onBackToShop }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedOrder, setExpandedOrder] = useState(null);
+  const [showMapForOrder, setShowMapForOrder] = useState(null);
 
   useEffect(() => {
     fetchMyOrders();
@@ -23,7 +25,17 @@ function MyOrders({ userId, onBackToShop }) {
       const data = await response.json();
       
       if (data.success) {
-        setOrders(data.orders || []);
+        const sortedOrders = (data.orders || []).sort((a, b) => b.createdAt - a.createdAt);
+        setOrders(sortedOrders);
+        
+        // Auto-show map for active orders
+        const activeOrder = sortedOrders.find(o => 
+          ['picking', 'out_for_delivery'].includes(o.status)
+        );
+        if (activeOrder && !showMapForOrder) {
+          setShowMapForOrder(activeOrder.orderId);
+          setExpandedOrder(activeOrder.orderId);
+        }
       } else {
         setError('Failed to load orders');
       }
@@ -95,6 +107,10 @@ function MyOrders({ userId, onBackToShop }) {
     setExpandedOrder(expandedOrder === orderId ? null : orderId);
   };
 
+  const toggleMap = (orderId) => {
+    setShowMapForOrder(showMapForOrder === orderId ? null : orderId);
+  };
+
   if (loading) {
     return (
       <div className="my-orders">
@@ -144,6 +160,8 @@ function MyOrders({ userId, onBackToShop }) {
             const statusInfo = getStatusInfo(order.status);
             const isExpanded = expandedOrder === order.orderId;
             const isActive = !['delivered'].includes(order.status);
+            const showMap = showMapForOrder === order.orderId;
+            const canShowMap = ['picking', 'out_for_delivery', 'delivered'].includes(order.status);
             
             return (
               <div 
@@ -197,6 +215,31 @@ function MyOrders({ userId, onBackToShop }) {
                       })}
                     </div>
                     <p className="status-description">{statusInfo.description}</p>
+                  </div>
+                )}
+
+                {/* Track on Map Button */}
+                {canShowMap && (
+                  <div className="map-toggle-section">
+                    <button 
+                      className={`map-toggle-btn ${showMap ? 'active' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleMap(order.orderId);
+                      }}
+                    >
+                      {showMap ? '🗺️ Hide Map' : '🗺️ Track on Map'}
+                    </button>
+                  </div>
+                )}
+
+                {/* Live Tracking Map */}
+                {showMap && canShowMap && (
+                  <div className="order-map-container">
+                    <OrderTrackingMap
+                      deliveryAddress={order.deliveryAddress}
+                      orderStatus={order.status}
+                    />
                   </div>
                 )}
 

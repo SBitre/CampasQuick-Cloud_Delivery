@@ -67,80 +67,72 @@ CampusQuick solves the problem of urgent, short-distance delivery for campus con
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                     LAMBDA FUNCTIONS                             │
-│  ┌────────────┐ ┌────────────┐ ┌────────────┐ ┌────────────┐   │
-│  │GetProducts │ │CreateOrder │ │GetUserOrder│ │GetOrderById│   │
-│  └────────────┘ └────────────┘ └────────────┘ └────────────┘   │
-│  ┌────────────┐ ┌────────────┐                                  │
-│  │GetAllOrders│ │UpdateStatus│                                  │
-│  └────────────┘ └────────────┘                                  │
+│                     LAMBDA FUNCTIONS (6)                         │
+│  GetProducts │ CreateOrder │ GetUserOrders │ GetOrderById       │
+│  GetAllOrders │ UpdateOrderStatus                               │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                       DYNAMODB                                   │
-│  ┌────────────┐ ┌────────────┐ ┌────────────┐                  │
-│  │  Products  │ │   Orders   │ │   Users    │                  │
-│  │  Table     │ │   Table    │ │   Table    │                  │
-│  │ (15 items) │ │  (2 GSIs)  │ │            │                  │
-│  └────────────┘ └────────────┘ └────────────┘                  │
+│                    DYNAMODB (3 Tables)                          │
+│  Products (50 items) │ Orders (GSIs) │ Users                    │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                    COGNITO USER POOL                             │
-│  ┌────────────┐ ┌────────────┐ ┌────────────┐                  │
-│  │ Customers  │ │   Admins   │ │  Runners   │                  │
-│  │   Group    │ │   Group    │ │   Group    │                  │
-│  └────────────┘ └────────────┘ └────────────┘                  │
+│         3 Groups: Customers │ Admins │ Runners                  │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### AWS Services Used
+### AWS Services Utilized
 
-| Service | Purpose | Why This Choice |
-|---------|---------|-----------------|
-| **S3** | Static website hosting for React app | Cost-effective, highly available |
-| **CloudFront** | CDN for global content delivery + HTTPS | Faster load times, SSL/TLS security |
-| **API Gateway** | RESTful API management | Managed service, built-in throttling |
-| **Lambda** | Serverless backend functions (6 functions) | Auto-scaling, pay-per-use |
-| **DynamoDB** | NoSQL database (3 tables, 2 GSIs) | Serverless, millisecond latency |
-| **Cognito** | User authentication & authorization | Managed auth, JWT tokens, user groups |
-| **CloudWatch** | Logging and monitoring | Centralized observability |
-| **IAM** | Security and access control | Least-privilege permissions |
-
-**Total Estimated Monthly Cost:** ~$4.80 for 1000 orders/month
+| Service | Purpose | Implementation |
+|---------|---------|----------------|
+| **S3** | Static website hosting | React production build |
+| **CloudFront** | CDN + HTTPS | Global edge caching, SSL/TLS |
+| **API Gateway** | REST API management | 6 endpoints, CORS enabled |
+| **Lambda** | Serverless compute | 6 Python 3.12 functions |
+| **DynamoDB** | NoSQL database | 3 tables, 2 GSIs |
+| **Cognito** | Authentication | User pool with 3 groups |
+| **IAM** | Access control | Least-privilege roles |
+| **CloudWatch** | Monitoring | Lambda execution logs |
 
 ---
 
-## ✅ Features Implemented
+## ✅ Features
 
-### 👤 Customer Features
-- ✅ **Splash Screen** - Branded loading screen with AWS services showcase
-- ✅ **User Authentication** - Sign up, sign in with Cognito
-- ✅ **Product Catalog** - Browse 15 products across 6 categories
-- ✅ **Shopping Cart** - Add/remove items, quantity management, localStorage persistence
-- ✅ **Checkout Flow** - Delivery address, instructions, order submission
-- ✅ **Order Confirmation** - Order ID, status, delivery estimate
-- ✅ **My Orders** - Track all orders with real-time progress bar
+### 🛍️ Customer Features
+- **Hero Section** - Store branding with quick stats
+- **Product Catalog** - Browse 50 products across 6 categories
+- **Search Bar** - Real-time search by product name or description
+- **Category Filters** - Filter by Beverages, Snacks, Health, Stationery, Personal Care, Electronics
+- **Shopping Cart** - Add/remove items with quantity management
+- **Checkout Flow** - Delivery address and special instructions
+- **Order Confirmation** - Order details with estimated delivery time
+- **My Orders** - Track orders with real-time status updates
+- **Google Maps Integration** - Live delivery tracking with runner location
 
 ### 👔 Admin Features
-- ✅ **Admin Dashboard** - View all orders with statistics
-- ✅ **Order Filtering** - Filter by status (Pending, Accepted, Picking, etc.)
-- ✅ **Status Updates** - Progress orders through fulfillment workflow
-- ✅ **Order Statistics** - Total, Pending, In Progress, Delivered counts
+- **Admin Dashboard** - View all orders with statistics
+- **Order Management** - Filter and update order status
+- **Status Workflow** - Progress orders through fulfillment
 
 ### 🚴 Runner Features
-- ✅ **Runner Dashboard** - View available pickups
-- ✅ **Order Pickup** - Accept and pick up orders from store
-- ✅ **Delivery Tracking** - Mark orders as out for delivery
-- ✅ **Delivery Confirmation** - Mark orders as delivered
+- **Runner Dashboard** - View available pickups
+- **Delivery Management** - Accept, pick up, and deliver orders
+- **Simulated GPS Tracking** - Demo mode for presentations
+- **Route Visualization** - Google Maps integration
 
-### 🎨 UI/UX Features
-- ✅ **College Convenience Theme** - Custom green & white branding
-- ✅ **Responsive Design** - Mobile-friendly UI
-- ✅ **Progress Tracker** - Visual 5-step order progress
-- ✅ **Auto-Refresh** - Real-time order updates (30-second polling)
+### 📦 Product Categories (50 Products)
+| Category | Count | Examples |
+|----------|-------|----------|
+| 🥤 Beverages | 10 | Red Bull, Gatorade, Coffee, Cola |
+| 🍕 Snacks & Food | 10 | Chips, Ramen, Granola Bars, Cookies |
+| 💊 Health & Medicine | 8 | Tylenol, Band-Aids, Vitamins |
+| 📚 Stationery | 8 | Notebooks, Pens, Highlighters |
+| 🧴 Personal Care | 8 | Toothpaste, Shampoo, Sanitizer |
+| 🔌 Electronics | 6 | Chargers, Cables, Batteries |
 
 ---
 
@@ -153,37 +145,27 @@ CampasQuick-Cloud_Delivery/
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── Auth.js            # Login/Register
-│   │   │   ├── Auth.css
 │   │   │   ├── Cart.js            # Shopping cart
-│   │   │   ├── Cart.css
 │   │   │   ├── Checkout.js        # Checkout form
-│   │   │   ├── Checkout.css
 │   │   │   ├── OrderConfirmation.js
-│   │   │   ├── OrderConfirmation.css
 │   │   │   ├── AdminDashboard.js  # Admin panel
-│   │   │   ├── AdminDashboard.css
 │   │   │   ├── RunnerDashboard.js # Runner panel
-│   │   │   ├── RunnerDashboard.css
 │   │   │   ├── MyOrders.js        # Order tracking
-│   │   │   ├── MyOrders.css
-│   │   │   ├── SplashScreen.js    # Loading screen
-│   │   │   └── SplashScreen.css
-│   │   ├── App.js
-│   │   ├── App.css
+│   │   │   ├── OrderTrackingMap.js # Google Maps
+│   │   │   └── SplashScreen.js    # Loading screen
+│   │   ├── App.js                 # Main app with search/filters
+│   │   ├── App.css                # Styling
 │   │   ├── aws-config.js          # Cognito config
 │   │   └── index.js
-│   ├── build/                     # Production build
 │   └── package.json
 ├── backend/
 │   └── lambda/
-│       ├── getProducts/           # GET /products
-│       ├── createOrder/           # POST /orders
-│       ├── getUserOrders/         # GET /orders/user/{userId}
-│       ├── getOrderById/          # GET /orders/id/{orderId}
-│       ├── getAllOrders/          # GET /admin/orders
-│       └── updateOrderStatus/     # PUT /admin/orders/{orderId}
-├── infrastructure/
-│   └── terraform/                 # Infrastructure as Code (future)
+│       ├── getProducts/
+│       ├── createOrder/
+│       ├── getUserOrders/
+│       ├── getOrderById/
+│       ├── getAllOrders/
+│       └── updateOrderStatus/
 ├── docs/
 │   ├── architecture/
 │   └── progress-reports/
@@ -201,16 +183,16 @@ CampasQuick-Cloud_Delivery/
 |------------|---------|
 | React 18 | UI framework |
 | AWS Amplify v6 | Cognito authentication |
-| CSS3 | Custom styling (College Convenience theme) |
-| localStorage | Cart persistence |
+| Google Maps API | Delivery tracking |
+| CSS3 | Custom styling |
 
 ### Backend
 | Technology | Purpose |
 |------------|---------|
-| AWS Lambda | Python 3.12 (6 functions) |
+| AWS Lambda | Python 3.12 serverless functions |
 | API Gateway | REST API with CORS |
-| DynamoDB | NoSQL database (3 tables, 2 GSIs) |
-| Cognito | User pools with 3 groups |
+| DynamoDB | NoSQL database with GSIs |
+| Cognito | User authentication |
 
 ### Infrastructure
 | Technology | Purpose |
@@ -219,53 +201,39 @@ CampasQuick-Cloud_Delivery/
 | CloudFront | CDN + HTTPS |
 | IAM | Security roles |
 
-### Development Tools
-| Tool | Purpose |
-|------|---------|
-| VS Code | IDE |
-| Postman | API testing |
-| AWS Console | Cloud management |
-| Git/GitHub | Version control |
-
 ---
 
-## 📊 Data Model
+## 📊 Database Schema
 
-### Products Table
+### Products Table (50 items)
 ```json
 {
   "productId": "prod_001",
   "name": "Red Bull Energy Drink",
-  "category": "beverages",
+  "category": "Beverages",
   "price": 3.99,
   "stock": 50,
-  "imageUrl": "https://...",
-  "description": "8.4 fl oz can, sugar-free available"
+  "imageUrl": "https://images.unsplash.com/...",
+  "description": "8.4 fl oz can - Wings when you need them"
 }
 ```
-**Current Data:** 15 products across 6 categories
 
 ### Orders Table
 ```json
 {
-  "orderId": "order_1769020870704",
-  "customerId": "94d80458-8051-7099-a1d9-63c54bb62a08",
-  "items": [
-    {"productId": "prod_015", "name": "Gatorade", "quantity": 2, "price": 2.29}
-  ],
-  "subtotal": 21.06,
+  "orderId": "order_1738500000000",
+  "customerId": "cognito-user-id",
+  "items": [...],
+  "subtotal": 15.98,
   "deliveryFee": 2.00,
-  "total": 23.06,
-  "deliveryAddress": "123 dorm hall",
-  "deliveryInstructions": "Call when you arrive",
-  "status": "delivered",
-  "createdAt": 1769020870704,
-  "acceptedAt": 1769020900000,
-  "deliveredAt": 1769021500000
+  "total": 17.98,
+  "deliveryAddress": "123 Dorm Hall",
+  "status": "pending",
+  "createdAt": 1738500000000
 }
 ```
 
-**Status Flow:**
+**Order Status Flow:**
 ```
 pending → accepted → picking → out_for_delivery → delivered
 ```
@@ -280,140 +248,80 @@ pending → accepted → picking → out_for_delivery → delivered
 
 | Feature | Implementation |
 |---------|----------------|
-| **Authentication** | AWS Cognito with JWT tokens |
-| **Authorization** | Role-based (customers, admins, runners groups) |
-| **Data Encryption** | DynamoDB encryption at rest (AWS managed) |
-| **Transport Security** | HTTPS enforced via CloudFront |
-| **CORS** | Configured for frontend origin |
-| **IAM** | Least-privilege Lambda execution roles |
+| Authentication | AWS Cognito with JWT tokens |
+| Authorization | Role-based (customers, admins, runners) |
+| Encryption at Rest | DynamoDB encryption (AWS managed) |
+| Encryption in Transit | HTTPS via CloudFront |
+| CORS | Configured for frontend origin |
+| IAM | Least-privilege Lambda roles |
 
 ---
 
 ## 🚀 API Endpoints
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/products` | List all products | No |
-| POST | `/orders` | Create new order | Yes |
-| GET | `/orders/user/{userId}` | Get user's orders | Yes |
-| GET | `/orders/id/{orderId}` | Get order by ID | Yes |
-| GET | `/admin/orders` | Get all orders | Admin |
-| PUT | `/admin/orders/{orderId}` | Update order status | Admin |
-
----
-
-## 🧪 Testing
-
-### Test Products API
-```bash
-curl https://kz2amymiqd.execute-api.us-east-1.amazonaws.com/prod/products
-```
-
-### Test Admin Orders API
-```bash
-curl https://kz2amymiqd.execute-api.us-east-1.amazonaws.com/prod/admin/orders
-```
-
-### Test Order Status Update
-```bash
-curl -X PUT \
-  https://kz2amymiqd.execute-api.us-east-1.amazonaws.com/prod/admin/orders/order_123 \
-  -H "Content-Type: application/json" \
-  -d '{"status": "accepted"}'
-```
-
----
-
-## 📈 Development Progress
-
-### ✅ Completed (Days 1-18)
-
-| Day | Task | Status |
-|-----|------|--------|
-| 1-2 | Project planning, architecture design | ✅ |
-| 3 | GitHub setup, React initialization | ✅ |
-| 4 | DynamoDB tables (3), sample data (15 products) | ✅ |
-| 5 | GetProducts Lambda + API Gateway | ✅ |
-| 6 | CreateOrder Lambda with validation | ✅ |
-| 7 | GetUserOrders + GetOrderById Lambdas | ✅ |
-| 8 | React product catalog + cart UI | ✅ |
-| 9 | Checkout flow + order submission | ✅ |
-| 10 | Order confirmation + UI polish | ✅ |
-| 11-12 | Cognito authentication setup | ✅ |
-| 13 | Admin Dashboard + GetAllOrders Lambda | ✅ |
-| 14 | UpdateOrderStatus Lambda | ✅ |
-| 15 | Splash screen + green theme styling | ✅ |
-| 16 | Runner Dashboard | ✅ |
-| 17 | My Orders + Order tracking | ✅ |
-| 18 | S3 + CloudFront deployment | ✅ |
-
-### 🔄 In Progress (Days 19-28)
-
-| Day | Task | Status |
-|-----|------|--------|
-| 19 | Google Maps + GPS tracking | 🔄 |
-| 20 | Email notifications (SES) | 📅 |
-| 21 | Product search/filter | 📅 |
-| 22 | Analytics dashboard | 📅 |
-| 23-24 | Progress report | 📅 |
-| 25-28 | Testing, documentation, demo prep | 📅 |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/products` | List all 50 products |
+| POST | `/orders` | Create new order |
+| GET | `/orders/user/{userId}` | Get user's orders |
+| GET | `/orders/id/{orderId}` | Get order by ID |
+| GET | `/admin/orders` | Get all orders (admin) |
+| PUT | `/admin/orders/{orderId}` | Update order status |
 
 ---
 
 ## 💰 Cost Analysis
 
 ### Current (Development)
-| Service | Usage | Cost |
-|---------|-------|------|
-| DynamoDB | 15 items, ~500 requests | $0.00 |
-| Lambda | ~200 invocations | $0.00 |
-| API Gateway | ~500 requests | $0.00 |
-| Cognito | 5 users | $0.00 |
-| S3 | ~5 MB static files | $0.00 |
-| CloudFront | ~1000 requests | $0.00 |
-| **Total** | | **$0.00** |
+| Service | Cost |
+|---------|------|
+| DynamoDB | $0.00 |
+| Lambda | $0.00 |
+| API Gateway | $0.00 |
+| S3 + CloudFront | $0.00 |
+| Cognito | $0.00 |
+| **Total** | **$0.00** |
 
-### Projected (1000 orders/month)
-| Service | Estimated Cost |
-|---------|----------------|
-| DynamoDB | $1.50 |
-| Lambda | $0.50 |
-| API Gateway | $1.00 |
-| S3 + CloudFront | $1.00 |
-| Cognito | $0.50 |
-| **Total** | **~$4.80/month** |
+### Projected (1,000 orders/month)
+| Service | Cost |
+|---------|------|
+| All Services | ~$4.80/month |
+| **Per Order** | **$0.0048** |
 
 ---
 
-## 🎓 Learning Objectives Demonstrated
+## 🧪 Quick Test
 
-- ☁️ **Cloud-Native Architecture** - Serverless design patterns
-- 🔧 **AWS Services** - Hands-on with 8+ AWS services
-- 🌐 **API Design** - RESTful API best practices
-- 🔐 **Security** - IAM roles, Cognito authentication, CORS
-- 💵 **Cost Optimization** - Pay-per-use pricing model
-- 📈 **Scalability** - Auto-scaling serverless infrastructure
-- 🚀 **DevOps** - CI/CD ready, version control
-- 💼 **Business Analysis** - IT solutions for real-world problems
+```bash
+# Get all products
+curl https://kz2amymiqd.execute-api.us-east-1.amazonaws.com/prod/products
+
+# Response
+{
+  "success": true,
+  "count": 50,
+  "products": [...]
+}
+```
 
 ---
 
-## 📈 AWS Well-Architected Framework Alignment
+## 📈 AWS Well-Architected Framework
 
 | Pillar | Implementation |
 |--------|----------------|
 | **Operational Excellence** | CloudWatch monitoring, GitHub version control |
-| **Security** | IAM roles, Cognito auth, DynamoDB encryption, HTTPS |
-| **Reliability** | Multi-AZ DynamoDB, Lambda automatic retries |
-| **Performance Efficiency** | CloudFront CDN, DynamoDB on-demand |
-| **Cost Optimization** | Serverless (pay-per-use), free tier usage |
+| **Security** | Cognito auth, IAM roles, encryption, HTTPS |
+| **Reliability** | Multi-AZ DynamoDB, Lambda auto-retry |
+| **Performance** | CloudFront CDN, DynamoDB on-demand |
+| **Cost Optimization** | Serverless pay-per-use, free tier |
 
 ---
 
 ## 👨‍💻 Author
 
 **Sumukh Pitre**  
-Northeastern University - MS in Informatics (Cloud Concentration)
+Northeastern University - MS in Informatics
 
 | Contact | Link |
 |---------|------|
@@ -425,16 +333,7 @@ Northeastern University - MS in Informatics (Cloud Concentration)
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🙏 Acknowledgments
-
-- **Course:** ITC 6420 - Introduction to Cloud Computing, Northeastern University
-- **Partner:** College Convenience Store (Northeastern University area)
-- **Technologies:** AWS Serverless Services
-- **Framework:** AWS Well-Architected Framework principles
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
@@ -444,20 +343,18 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Lambda-6%20Functions-orange?logo=aws-lambda" />
-  <img src="https://img.shields.io/badge/DynamoDB-3%20Tables-blue?logo=amazon-dynamodb" />
-  <img src="https://img.shields.io/badge/Cognito-3%20User%20Groups-green?logo=amazon-aws" />
-  <img src="https://img.shields.io/badge/CloudFront-HTTPS-purple?logo=amazon-aws" />
+  <img src="https://img.shields.io/badge/Products-50-blue" />
+  <img src="https://img.shields.io/badge/Lambda-6%20Functions-orange" />
+  <img src="https://img.shields.io/badge/DynamoDB-3%20Tables-green" />
+  <img src="https://img.shields.io/badge/Cognito-3%20Roles-purple" />
 </p>
 
 ---
 
 **Status:** 🟢 Live in Production  
-**Progress:** 64% Complete (18/28 days)  
 **Live URL:** https://d30albafirjxu4.cloudfront.net  
-**Expected Completion:** February 9, 2025  
+**Demo Date:** February 9, 2025
 
 ---
 
-*Last Updated: January 22, 2025*  
-*Next Milestone: Google Maps + GPS Tracking (Day 19)*
+*Last Updated: February 2, 2025*

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import OrderTrackingMap from './OrderTrackingMap';
 import './RunnerDashboard.css';
 
 const API_BASE_URL = 'https://kz2amymiqd.execute-api.us-east-1.amazonaws.com/prod';
@@ -9,6 +10,8 @@ function RunnerDashboard({ userId }) {
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('available');
   const [updating, setUpdating] = useState(null);
+  const [simulatingOrder, setSimulatingOrder] = useState(null);
+  const [showMapForOrder, setShowMapForOrder] = useState(null);
 
   useEffect(() => {
     fetchOrders();
@@ -62,8 +65,8 @@ function RunnerDashboard({ userId }) {
   };
 
   const acceptOrder = async (orderId) => {
-    // First set to picking, then assign runner
     await updateOrderStatus(orderId, 'picking');
+    setShowMapForOrder(orderId);
   };
 
   const markOutForDelivery = async (orderId) => {
@@ -72,6 +75,31 @@ function RunnerDashboard({ userId }) {
 
   const markDelivered = async (orderId) => {
     await updateOrderStatus(orderId, 'delivered');
+    setSimulatingOrder(null);
+    setShowMapForOrder(null);
+  };
+
+  // Simulate entire delivery (for demo purposes)
+  const simulateDelivery = async (orderId) => {
+    setSimulatingOrder(orderId);
+    setShowMapForOrder(orderId);
+    
+    // Step 1: Pick up order
+    await updateOrderStatus(orderId, 'picking');
+    
+    // Step 2: After 2 seconds, start delivery
+    setTimeout(async () => {
+      await updateOrderStatus(orderId, 'out_for_delivery');
+    }, 2000);
+    
+    // Note: The map will show the animation
+    // onSimulationComplete in the map will mark as delivered
+  };
+
+  const handleSimulationComplete = async () => {
+    if (simulatingOrder) {
+      await markDelivered(simulatingOrder);
+    }
   };
 
   const getStatusLabel = (status) => {
@@ -88,7 +116,7 @@ function RunnerDashboard({ userId }) {
   // Filter orders based on selected tab
   const filteredOrders = orders.filter(order => {
     if (filter === 'available') {
-      return order.status === 'accepted'; // Orders ready for runner to pick up
+      return order.status === 'accepted';
     } else if (filter === 'my_deliveries') {
       return ['picking', 'out_for_delivery'].includes(order.status);
     } else if (filter === 'completed') {
@@ -233,35 +261,76 @@ function RunnerDashboard({ userId }) {
                 </div>
               </div>
 
+              {/* Map for Active Deliveries */}
+              {showMapForOrder === order.orderId && ['picking', 'out_for_delivery'].includes(order.status) && (
+                <div className="order-map-section">
+                  <OrderTrackingMap
+                    deliveryAddress={order.deliveryAddress}
+                    orderStatus={order.status}
+                    isSimulating={simulatingOrder === order.orderId}
+                    onSimulationComplete={handleSimulationComplete}
+                  />
+                </div>
+              )}
+
               <div className="order-card-actions">
                 {order.status === 'accepted' && (
-                  <button 
-                    className="action-btn pickup-btn"
-                    onClick={() => acceptOrder(order.orderId)}
-                    disabled={updating === order.orderId}
-                  >
-                    {updating === order.orderId ? 'Processing...' : '🏪 Pick Up Order'}
-                  </button>
+                  <>
+                    <button 
+                      className="action-btn pickup-btn"
+                      onClick={() => acceptOrder(order.orderId)}
+                      disabled={updating === order.orderId}
+                    >
+                      {updating === order.orderId ? 'Processing...' : '🏪 Pick Up Order'}
+                    </button>
+                    <button 
+                      className="action-btn simulate-btn"
+                      onClick={() => simulateDelivery(order.orderId)}
+                      disabled={updating === order.orderId || simulatingOrder}
+                    >
+                      🎬 Simulate Full Delivery (Demo)
+                    </button>
+                  </>
                 )}
                 
                 {order.status === 'picking' && (
-                  <button 
-                    className="action-btn out-btn"
-                    onClick={() => markOutForDelivery(order.orderId)}
-                    disabled={updating === order.orderId}
-                  >
-                    {updating === order.orderId ? 'Processing...' : '🚴 Start Delivery'}
-                  </button>
+                  <>
+                    <button 
+                      className="action-btn out-btn"
+                      onClick={() => markOutForDelivery(order.orderId)}
+                      disabled={updating === order.orderId}
+                    >
+                      {updating === order.orderId ? 'Processing...' : '🚴 Start Delivery'}
+                    </button>
+                    {!showMapForOrder && (
+                      <button 
+                        className="action-btn map-btn"
+                        onClick={() => setShowMapForOrder(order.orderId)}
+                      >
+                        🗺️ Show Map
+                      </button>
+                    )}
+                  </>
                 )}
                 
                 {order.status === 'out_for_delivery' && (
-                  <button 
-                    className="action-btn deliver-btn"
-                    onClick={() => markDelivered(order.orderId)}
-                    disabled={updating === order.orderId}
-                  >
-                    {updating === order.orderId ? 'Processing...' : '✅ Mark Delivered'}
-                  </button>
+                  <>
+                    <button 
+                      className="action-btn deliver-btn"
+                      onClick={() => markDelivered(order.orderId)}
+                      disabled={updating === order.orderId}
+                    >
+                      {updating === order.orderId ? 'Processing...' : '✅ Mark Delivered'}
+                    </button>
+                    {!showMapForOrder && (
+                      <button 
+                        className="action-btn map-btn"
+                        onClick={() => setShowMapForOrder(order.orderId)}
+                      >
+                        🗺️ Show Map
+                      </button>
+                    )}
+                  </>
                 )}
 
                 {order.status === 'delivered' && (

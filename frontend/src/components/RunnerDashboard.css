@@ -264,11 +264,21 @@
   font-size: 0.85rem;
 }
 
+/* Map Section */
+.order-map-section {
+  padding: 15px 20px;
+  border-top: 1px solid #eee;
+  background: #f8f9fa;
+}
+
 /* Action Buttons */
 .order-card-actions {
   padding: 15px 20px;
   background: #f8f9fa;
   border-top: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .action-btn {
@@ -292,6 +302,16 @@
   transform: scale(1.01);
 }
 
+.simulate-btn {
+  background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+  color: white;
+}
+
+.simulate-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: scale(1.01);
+}
+
 .out-btn {
   background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
   color: white;
@@ -310,6 +330,15 @@
 .deliver-btn:hover:not(:disabled) {
   opacity: 0.9;
   transform: scale(1.01);
+}
+
+.map-btn {
+  background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+  color: white;
+}
+
+.map-btn:hover:not(:disabled) {
+  opacity: 0.9;
 }
 
 .action-btn:disabled {
@@ -379,5 +408,9 @@
     flex-direction: column;
     gap: 10px;
     text-align: center;
+  }
+
+  .order-card-actions {
+    gap: 8px;
   }
 }

@@ -16,6 +16,17 @@ Amplify.configure(awsconfig);
 
 const API_BASE_URL = 'https://kz2amymiqd.execute-api.us-east-1.amazonaws.com/prod';
 
+// Category configuration with icons
+const CATEGORIES = [
+  { id: 'all', name: 'All Products', icon: '🛒' },
+  { id: 'Beverages', name: 'Beverages', icon: '🥤' },
+  { id: 'Snacks & Food', name: 'Snacks & Food', icon: '🍕' },
+  { id: 'Health & Medicine', name: 'Health & Medicine', icon: '💊' },
+  { id: 'Stationery', name: 'Stationery', icon: '📚' },
+  { id: 'Personal Care', name: 'Personal Care', icon: '🧴' },
+  { id: 'Electronics', name: 'Electronics', icon: '🔌' },
+];
+
 function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [products, setProducts] = useState([]);
@@ -26,6 +37,10 @@ function App() {
   const [completedOrder, setCompletedOrder] = useState(null);
   const [user, setUser] = useState(null);
   const [userGroups, setUserGroups] = useState([]);
+  
+  // Search and filter state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
   useEffect(() => {
     const savedCart = localStorage.getItem('campusquick_cart');
@@ -49,6 +64,15 @@ function App() {
       const groups = session.tokens?.idToken?.payload['cognito:groups'] || [];
       setUserGroups(groups);
       
+      // Set default view based on role
+      if (groups.includes('runners')) {
+        setView('runner');
+      } else if (groups.includes('admins')) {
+        setView('admin');
+      } else {
+        setView('products');
+      }
+      
       fetchProducts();
     } catch (err) {
       setLoading(false);
@@ -60,6 +84,16 @@ function App() {
     const session = await fetchAuthSession();
     const groups = session.tokens?.idToken?.payload['cognito:groups'] || [];
     setUserGroups(groups);
+    
+    // Set default view based on role
+    if (groups.includes('runners')) {
+      setView('runner');
+    } else if (groups.includes('admins')) {
+      setView('admin');
+    } else {
+      setView('products');
+    }
+    
     fetchProducts();
   };
 
@@ -127,9 +161,24 @@ function App() {
     setView('products');
   };
 
+  // Filter products based on search and category
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          product.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  // Get product count by category
+  const getCategoryCount = (categoryId) => {
+    if (categoryId === 'all') return products.length;
+    return products.filter(p => p.category === categoryId).length;
+  };
+
   // Check user roles
   const isAdmin = userGroups.includes('admins');
   const isRunner = userGroups.includes('runners');
+  const isCustomer = userGroups.includes('customers') || (!isAdmin && !isRunner);
 
   // Show splash screen first
   if (showSplash) {
@@ -144,7 +193,7 @@ function App() {
   if (loading) {
     return (
       <div className="App">
-        <div className="loading">Loading products...</div>
+        <div className="loading">Loading...</div>
       </div>
     );
   }
@@ -167,34 +216,50 @@ function App() {
         <div className="header-right">
           {/* Navigation based on user role */}
           <nav className="role-nav">
-            {/* Everyone can shop */}
-            <button 
-              className={`nav-btn ${view === 'products' || view === 'cart' || view === 'checkout' || view === 'confirmation' ? 'active' : ''}`}
-              onClick={() => setView('products')}
-            >
-              🛍️ Shop
-            </button>
-
-            {/* My Orders - for all users */}
-            <button 
-              className={`nav-btn ${view === 'myorders' ? 'active' : ''}`}
-              onClick={() => setView('myorders')}
-            >
-              📦 My Orders
-            </button>
-            
-            {/* Admin Dashboard */}
-            {isAdmin && (
-              <button 
-                className={`nav-btn ${view === 'admin' ? 'active' : ''}`}
-                onClick={() => setView('admin')}
-              >
-                📋 Admin
-              </button>
+            {/* Customer Navigation */}
+            {isCustomer && !isRunner && (
+              <>
+                <button 
+                  className={`nav-btn ${['products', 'cart', 'checkout', 'confirmation'].includes(view) ? 'active' : ''}`}
+                  onClick={() => setView('products')}
+                >
+                  🛍️ Shop
+                </button>
+                <button 
+                  className={`nav-btn ${view === 'myorders' ? 'active' : ''}`}
+                  onClick={() => setView('myorders')}
+                >
+                  📦 My Orders
+                </button>
+              </>
             )}
             
-            {/* Runner Dashboard */}
-            {isRunner && (
+            {/* Admin Navigation - can also shop */}
+            {isAdmin && (
+              <>
+                <button 
+                  className={`nav-btn ${['products', 'cart', 'checkout', 'confirmation'].includes(view) ? 'active' : ''}`}
+                  onClick={() => setView('products')}
+                >
+                  🛍️ Shop
+                </button>
+                <button 
+                  className={`nav-btn ${view === 'myorders' ? 'active' : ''}`}
+                  onClick={() => setView('myorders')}
+                >
+                  📦 My Orders
+                </button>
+                <button 
+                  className={`nav-btn ${view === 'admin' ? 'active' : ''}`}
+                  onClick={() => setView('admin')}
+                >
+                  📋 Admin
+                </button>
+              </>
+            )}
+            
+            {/* Runner Navigation - ONLY deliveries */}
+            {isRunner && !isAdmin && (
               <button 
                 className={`nav-btn ${view === 'runner' ? 'active' : ''}`}
                 onClick={() => setView('runner')}
@@ -226,16 +291,16 @@ function App() {
         <RunnerDashboard userId={user.username} />
       )}
 
-      {/* My Orders View */}
-      {view === 'myorders' && (
+      {/* My Orders View - for customers and admins, not runners */}
+      {view === 'myorders' && !isRunner && (
         <MyOrders 
           userId={user.username} 
           onBackToShop={() => setView('products')}
         />
       )}
 
-      {/* Customer Shopping Views */}
-      {!['admin', 'runner', 'myorders'].includes(view) && (
+      {/* Customer Shopping Views - for customers and admins, not runners */}
+      {!['admin', 'runner', 'myorders'].includes(view) && !isRunner && (
         <>
           {cart.length > 0 && view !== 'confirmation' && (
             <div className="cart-badge" onClick={() => setView(view === 'cart' ? 'products' : 'cart')}>
@@ -246,41 +311,129 @@ function App() {
 
           {view === 'products' && (
             <div className="products-container">
-              <h2>📦 Available Products ({products.length})</h2>
-              
-              <div className="products-grid">
-                {products.map(product => (
-                  <div key={product.productId} className="product-card">
-                    <img 
-                      src={product.imageUrl} 
-                      alt={product.name}
-                      className="product-image"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = `https://via.placeholder.com/280x180/1a5e3a/ffffff?text=${encodeURIComponent(product.name)}`;
-                      }}
-                    />
-                    <span className="product-category">{product.category}</span>
-                    <h3 className="product-name">{product.name}</h3>
-                    <p className="product-description">{product.description}</p>
-                    
-                    <div className="product-footer">
-                      <div>
-                        <div className="product-price">${product.price.toFixed(2)}</div>
-                        <div className="product-stock">Stock: {product.stock}</div>
-                      </div>
+              {/* Hero Section */}
+              <div className="hero-section">
+                <div className="hero-content">
+                  <h2>🏪 College Convenience</h2>
+                  <p>Your campus essentials, delivered fast</p>
+                  <div className="hero-stats">
+                    <div className="hero-stat">
+                      <span className="stat-number">50+</span>
+                      <span className="stat-label">Products</span>
                     </div>
-                    
-                    <button 
-                      className="add-to-cart-btn"
-                      onClick={() => addToCart(product)}
-                      disabled={product.stock === 0}
-                    >
-                      {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
-                    </button>
+                    <div className="hero-stat">
+                      <span className="stat-number">20-30</span>
+                      <span className="stat-label">Min Delivery</span>
+                    </div>
+                    <div className="hero-stat">
+                      <span className="stat-number">$2</span>
+                      <span className="stat-label">Delivery Fee</span>
+                    </div>
                   </div>
+                </div>
+              </div>
+
+              {/* Search Bar */}
+              <div className="search-section">
+                <div className="search-bar">
+                  <span className="search-icon">🔍</span>
+                  <input
+                    type="text"
+                    placeholder="Search for products..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="search-input"
+                  />
+                  {searchQuery && (
+                    <button 
+                      className="search-clear"
+                      onClick={() => setSearchQuery('')}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Category Tabs */}
+              <div className="category-tabs">
+                {CATEGORIES.map(category => (
+                  <button
+                    key={category.id}
+                    className={`category-tab ${selectedCategory === category.id ? 'active' : ''}`}
+                    onClick={() => setSelectedCategory(category.id)}
+                  >
+                    <span className="category-icon">{category.icon}</span>
+                    <span className="category-name">{category.name}</span>
+                    <span className="category-count">({getCategoryCount(category.id)})</span>
+                  </button>
                 ))}
               </div>
+
+              {/* Products Header */}
+              <div className="products-header">
+                <h3>
+                  {selectedCategory === 'all' ? '📦 All Products' : `${CATEGORIES.find(c => c.id === selectedCategory)?.icon} ${selectedCategory}`}
+                  <span className="products-count">({filteredProducts.length} items)</span>
+                </h3>
+                {searchQuery && (
+                  <p className="search-results-text">
+                    Showing results for "{searchQuery}"
+                  </p>
+                )}
+              </div>
+
+              {/* Products Grid */}
+              {filteredProducts.length === 0 ? (
+                <div className="no-products">
+                  <span className="no-products-icon">😕</span>
+                  <h3>No products found</h3>
+                  <p>Try a different search or category</p>
+                  <button 
+                    className="reset-filters-btn"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setSelectedCategory('all');
+                    }}
+                  >
+                    Reset Filters
+                  </button>
+                </div>
+              ) : (
+                <div className="products-grid">
+                  {filteredProducts.map(product => (
+                    <div key={product.productId} className="product-card">
+                      <img 
+                        src={product.imageUrl} 
+                        alt={product.name}
+                        className="product-image"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = `https://placehold.co/280x180/1a5e3a/ffffff?text=${encodeURIComponent(product.name)}`;
+                        }}
+                      />
+                      <span className="product-category">{product.category}</span>
+                      <h3 className="product-name">{product.name}</h3>
+                      <p className="product-description">{product.description}</p>
+                      
+                      <div className="product-footer">
+                        <div>
+                          <div className="product-price">${product.price.toFixed(2)}</div>
+                          <div className="product-stock">Stock: {product.stock}</div>
+                        </div>
+                      </div>
+                      
+                      <button 
+                        className="add-to-cart-btn"
+                        onClick={() => addToCart(product)}
+                        disabled={product.stock === 0}
+                      >
+                        {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -308,6 +461,13 @@ function App() {
             />
           )}
         </>
+      )}
+
+      {/* Runner sees only their dashboard */}
+      {isRunner && !isAdmin && view !== 'runner' && (
+        <div className="runner-redirect">
+          <p>Redirecting to deliveries...</p>
+        </div>
       )}
     </div>
   );
