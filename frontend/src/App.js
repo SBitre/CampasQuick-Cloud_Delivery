@@ -450,6 +450,7 @@ function App() {
               cart={cart}
               onSuccess={handleOrderSuccess}
               onCancel={() => setView('cart')}
+              userId={user.username}
               userEmail={user.signInDetails?.loginId || user.username}
             />
           )}

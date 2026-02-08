@@ -3,9 +3,8 @@ import './Checkout.css';
 
 const API_BASE_URL = 'https://kz2amymiqd.execute-api.us-east-1.amazonaws.com/prod';
 
-function Checkout({ cart, onSuccess, onCancel, userEmail }) {
+function Checkout({ cart, onSuccess, onCancel, userId, userEmail }) {
   const [formData, setFormData] = useState({
-    customerId: '',
     deliveryAddress: '',
     deliveryInstructions: ''
   });
@@ -19,6 +18,14 @@ function Checkout({ cart, onSuccess, onCancel, userEmail }) {
     });
   };
 
+  const getSubtotal = () => {
+    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+  };
+
+  const deliveryFee = 2.00;
+  const subtotal = getSubtotal();
+  const total = subtotal + deliveryFee;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
@@ -26,11 +33,17 @@ function Checkout({ cart, onSuccess, onCancel, userEmail }) {
 
     try {
       const orderData = {
-       customerId: userId,
+        customerId: userId,
         items: cart.map(item => ({
           productId: item.productId,
-          quantity: item.quantity
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          itemTotal: item.price * item.quantity
         })),
+        subtotal: subtotal,
+        deliveryFee: deliveryFee,
+        total: total,
         deliveryAddress: formData.deliveryAddress,
         deliveryInstructions: formData.deliveryInstructions
       };
@@ -57,83 +70,102 @@ function Checkout({ cart, onSuccess, onCancel, userEmail }) {
     }
   };
 
-  const getTotal = () => {
-    const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-    return subtotal + 2.00;
-  };
-
   return (
-    <div className="checkout-container">
-      <h2>📝 Checkout</h2>
-
-      <div className="checkout-content">
-        <div className="checkout-form">
-          <h3>Delivery Information</h3>
-          
+    <div className="checkout">
+      <h2>📦 Checkout</h2>
+      
+      <div className="checkout-container">
+        <div className="checkout-form-section">
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Customer ID (optional)</label>
+              <label>Email</label>
               <input
                 type="text"
-                name="customerId"
-                value={formData.customerId}
-                onChange={handleChange}
-                placeholder="Leave blank for guest checkout"
+                value={userEmail}
+                disabled
+                className="input-disabled"
               />
             </div>
 
             <div className="form-group">
-              <label>Delivery Address *</label>
-              <textarea
+              <label htmlFor="deliveryAddress">Delivery Address *</label>
+              <input
+                type="text"
+                id="deliveryAddress"
                 name="deliveryAddress"
                 value={formData.deliveryAddress}
                 onChange={handleChange}
+                placeholder="e.g., 456 Dorm Hall, Room 302"
                 required
-                placeholder="123 Dorm Hall, Room 405, Northeastern University"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="deliveryInstructions">Delivery Instructions (Optional)</label>
+              <textarea
+                id="deliveryInstructions"
+                name="deliveryInstructions"
+                value={formData.deliveryInstructions}
+                onChange={handleChange}
+                placeholder="e.g., Call when you arrive, Leave at door"
                 rows="3"
               />
             </div>
 
-            <div className="form-group">
-              <label>Delivery Instructions</label>
-              <textarea
-                name="deliveryInstructions"
-                value={formData.deliveryInstructions}
-                onChange={handleChange}
-                placeholder="Call when you arrive, ring doorbell twice, etc."
-                rows="2"
-              />
-            </div>
-
-            {error && <div className="checkout-error">{error}</div>}
+            {error && <div className="error-message">{error}</div>}
 
             <div className="checkout-actions">
-              <button type="button" onClick={onCancel} className="cancel-btn">
-                Cancel
+              <button 
+                type="button" 
+                className="cancel-btn"
+                onClick={onCancel}
+              >
+                ← Back to Cart
               </button>
-              <button type="submit" disabled={submitting} className="submit-btn">
-                {submitting ? 'Placing Order...' : `Place Order - $${getTotal().toFixed(2)}`}
+              <button 
+                type="submit" 
+                className="place-order-btn"
+                disabled={submitting}
+              >
+                {submitting ? 'Placing Order...' : 'Place Order →'}
               </button>
             </div>
           </form>
         </div>
 
-        <div className="checkout-summary">
+        <div className="checkout-summary-section">
           <h3>Order Summary</h3>
-          {cart.map(item => (
-            <div key={item.productId} className="summary-item">
-              <span>{item.quantity}x {item.name}</span>
-              <span>${(item.price * item.quantity).toFixed(2)}</span>
-            </div>
-          ))}
-          <div className="summary-divider"></div>
-          <div className="summary-item">
-            <span>Delivery Fee</span>
-            <span>$2.00</span>
+          
+          <div className="summary-items">
+            {cart.map(item => (
+              <div key={item.productId} className="summary-item">
+                <div className="summary-item-info">
+                  <span className="summary-item-qty">{item.quantity}x</span>
+                  <span className="summary-item-name">{item.name}</span>
+                </div>
+                <span className="summary-item-price">${(item.price * item.quantity).toFixed(2)}</span>
+              </div>
+            ))}
           </div>
-          <div className="summary-total">
-            <span>Total</span>
-            <span>${getTotal().toFixed(2)}</span>
+
+          <div className="summary-totals">
+            <div className="summary-row">
+              <span>Subtotal</span>
+              <span>${subtotal.toFixed(2)}</span>
+            </div>
+            <div className="summary-row">
+              <span>Delivery Fee</span>
+              <span>${deliveryFee.toFixed(2)}</span>
+            </div>
+            <div className="summary-row total">
+              <span>Total</span>
+              <span>${total.toFixed(2)}</span>
+            </div>
+          </div>
+
+          <div className="delivery-estimate">
+            <span className="estimate-icon">🚴</span>
+            <span>Estimated delivery: <strong>20-30 minutes</strong></span>
           </div>
         </div>
       </div>
