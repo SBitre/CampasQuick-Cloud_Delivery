@@ -4,135 +4,186 @@
 [![React](https://img.shields.io/badge/React-18-blue?logo=react)](https://reactjs.org/)
 [![Python](https://img.shields.io/badge/Python-3.12-green?logo=python)](https://python.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Live-brightgreen)](https://d30albafirjxu4.cloudfront.net)
+[![Status](https://img.shields.io/badge/Status-Completed-brightgreen)](https://d30albafirjxu4.cloudfront.net)
 
-> A cloud-native grocery and essentials fulfillment platform designed for university campus environments, built with AWS serverless architecture. Partnered with **College Convenience** store for real-world deployment.
+> A cloud-native grocery and essentials fulfillment platform designed for university campus environments, built entirely on AWS serverless architecture.
 
 ---
 
 ## 🚀 Live Demo
 
-### 🌐 **Live Application:**
-**https://d30albafirjxu4.cloudfront.net**
-
-### 📡 **API Endpoints:**
-| Endpoint | URL |
-|----------|-----|
-| Products | `https://kz2amymiqd.execute-api.us-east-1.amazonaws.com/prod/products` |
-| Admin Orders | `https://kz2amymiqd.execute-api.us-east-1.amazonaws.com/prod/admin/orders` |
+### 🌐 **Live Application:** [https://d30albafirjxu4.cloudfront.net](https://d30albafirjxu4.cloudfront.net)
 
 ### 🔐 **Test Accounts:**
 | Role | Email | Password |
 |------|-------|----------|
-| Customer | `customer@test.com` | `Test123!` |
-| Admin | `admin@test.com` | `Admin123!` |
-| Runner | `runner@test.com` | `Runner123!` |
+| 👤 Customer | `customer@test.com` | `Test123!` |
+| 👔 Admin | `admin@test.com` | `Admin123!` |
+| 🚴 Runner | `runner@test.com` | `Runner123!` |
 
 ---
 
-## 🎯 Project Overview
+## 📋 Project Overview
 
-CampusQuick solves the problem of urgent, short-distance delivery for campus convenience stores. Students can order essentials (snacks, beverages, toiletries, etc.) and receive them within **20-30 minutes** from nearby stores.
+**CampusQuick** solves the problem of urgent, short-distance delivery for campus convenience stores. Students can order essentials (snacks, beverages, toiletries, etc.) and receive them within **20-30 minutes** from nearby stores.
 
-**Business Problem:** University convenience stores lack structured digital systems for fast, reliable hyperlocal delivery, leading to lost sales and poor customer experience.
+### Business Problem
+University convenience stores lack structured digital systems for fast, reliable hyperlocal delivery, leading to lost sales and poor customer experience.
 
-**Solution:** A serverless cloud platform that enables small businesses to compete with large retailers through efficient order fulfillment workflows.
-
-**Partner Store:** College Convenience (Open 24/7) - Northeastern University area
+### Solution
+A serverless cloud platform that enables small businesses to compete with large retailers through efficient order fulfillment workflows with **$0 infrastructure cost** during development and minimal cost at scale.
 
 ---
 
 ## 🏗️ Architecture
 
-### High-Level Design
-
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                         FRONTEND                                 │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐         │
-│  │   React     │    │   Amplify   │    │  CloudFront │         │
-│  │   SPA       │───▶│   Auth      │───▶│   + S3      │         │
-│  └─────────────┘    └─────────────┘    └─────────────┘         │
+│       React SPA → AWS Amplify Auth → S3 + CloudFront            │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                      API GATEWAY                                 │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │  GET /products          POST /orders                      │  │
-│  │  GET /orders/user/{id}  GET /orders/id/{id}              │  │
-│  │  GET /admin/orders      PUT /admin/orders/{id}           │  │
-│  └──────────────────────────────────────────────────────────┘  │
+│                      API GATEWAY (REST)                          │
+│    GET /products    │    POST /orders    │    PUT /admin/orders │
+│    GET /orders/user │    GET /orders/id  │    GET /admin/orders │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                     LAMBDA FUNCTIONS (6)                         │
+│                    LAMBDA FUNCTIONS (6)                          │
 │  GetProducts │ CreateOrder │ GetUserOrders │ GetOrderById       │
-│  GetAllOrders │ UpdateOrderStatus                               │
+│              │ GetAllOrders │ UpdateOrderStatus                 │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                    DYNAMODB (3 Tables)                          │
-│  Products (50 items) │ Orders (GSIs) │ Users                    │
+│                       DYNAMODB                                   │
+│   Products (50 items)  │  Orders (2 GSIs)  │  Users             │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                    COGNITO USER POOL                             │
-│         3 Groups: Customers │ Admins │ Runners                  │
+│           customers  │  admins  │  runners                      │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### AWS Services Utilized
+### AWS Services Used
 
-| Service | Purpose | Implementation |
-|---------|---------|----------------|
-| **S3** | Static website hosting | React production build |
-| **CloudFront** | CDN + HTTPS | Global edge caching, SSL/TLS |
-| **API Gateway** | REST API management | 6 endpoints, CORS enabled |
-| **Lambda** | Serverless compute | 6 Python 3.12 functions |
-| **DynamoDB** | NoSQL database | 3 tables, 2 GSIs |
-| **Cognito** | Authentication | User pool with 3 groups |
-| **IAM** | Access control | Least-privilege roles |
-| **CloudWatch** | Monitoring | Lambda execution logs |
+| Service | Purpose |
+|---------|---------|
+| **S3** | Static website hosting |
+| **CloudFront** | CDN + HTTPS |
+| **API Gateway** | REST API (6 endpoints) |
+| **Lambda** | Serverless functions (Python 3.12) |
+| **DynamoDB** | NoSQL database (3 tables, 2 GSIs) |
+| **Cognito** | Authentication + Authorization |
+| **IAM** | Least-privilege access control |
+| **CloudWatch** | Logging and monitoring |
 
 ---
 
 ## ✅ Features
 
-### 🛍️ Customer Features
-- **Hero Section** - Store branding with quick stats
-- **Product Catalog** - Browse 50 products across 6 categories
-- **Search Bar** - Real-time search by product name or description
-- **Category Filters** - Filter by Beverages, Snacks, Health, Stationery, Personal Care, Electronics
-- **Shopping Cart** - Add/remove items with quantity management
-- **Checkout Flow** - Delivery address and special instructions
-- **Order Confirmation** - Order details with estimated delivery time
-- **My Orders** - Track orders with real-time status updates
-- **Google Maps Integration** - Live delivery tracking with runner location
+### Customer Features
+- 🏠 **Hero Section** - Store branding with quick stats
+- 🔍 **Search Bar** - Real-time product search
+- 📂 **Category Filters** - Browse by 6 categories
+- 🛒 **Shopping Cart** - Add/remove items, quantity controls
+- 📦 **Order Tracking** - Real-time status updates
+- 🗺️ **Google Maps** - Live delivery tracking
 
-### 👔 Admin Features
-- **Admin Dashboard** - View all orders with statistics
-- **Order Management** - Filter and update order status
-- **Status Workflow** - Progress orders through fulfillment
+### Admin Features
+- 📊 **Dashboard** - Order statistics and overview
+- 📋 **Order Management** - View and update all orders
+- ✅ **Status Workflow** - Accept → Pick → Deliver
 
-### 🚴 Runner Features
-- **Runner Dashboard** - View available pickups
-- **Delivery Management** - Accept, pick up, and deliver orders
-- **Simulated GPS Tracking** - Demo mode for presentations
-- **Route Visualization** - Google Maps integration
+### Runner Features
+- 🚴 **Delivery Dashboard** - View available pickups
+- 📍 **Route Management** - Accept and complete deliveries
+- 🗺️ **Map Integration** - Delivery tracking
 
-### 📦 Product Categories (50 Products)
-| Category | Count | Examples |
-|----------|-------|----------|
-| 🥤 Beverages | 10 | Red Bull, Gatorade, Coffee, Cola |
-| 🍕 Snacks & Food | 10 | Chips, Ramen, Granola Bars, Cookies |
-| 💊 Health & Medicine | 8 | Tylenol, Band-Aids, Vitamins |
-| 📚 Stationery | 8 | Notebooks, Pens, Highlighters |
-| 🧴 Personal Care | 8 | Toothpaste, Shampoo, Sanitizer |
-| 🔌 Electronics | 6 | Chargers, Cables, Batteries |
+### Product Catalog
+| Category | Count |
+|----------|-------|
+| 🥤 Beverages | 10 |
+| 🍕 Snacks & Food | 10 |
+| 💊 Health & Medicine | 8 |
+| 📚 Stationery | 8 |
+| 🧴 Personal Care | 8 |
+| 🔌 Electronics | 6 |
+| **Total** | **50 products** |
+
+---
+
+## 📊 Database Schema
+
+### Orders Table
+```json
+{
+  "orderId": "order_1738500000000",
+  "customerId": "cognito-user-id",
+  "items": [
+    { "productId": "prod_001", "name": "Red Bull", "quantity": 2, "price": 3.99 }
+  ],
+  "subtotal": 7.98,
+  "deliveryFee": 2.00,
+  "total": 9.98,
+  "deliveryAddress": "456 Dorm Hall, Room 302",
+  "status": "pending",
+  "createdAt": 1738500000000
+}
+```
+
+### Order Status Flow
+```
+pending → accepted → picking → out_for_delivery → delivered
+```
+
+### Global Secondary Indexes
+- `customerId-index` - Query orders by customer
+- `status-index` - Query orders by status
+
+---
+
+## 💰 Cost Analysis
+
+| Environment | Monthly Cost |
+|-------------|--------------|
+| Development | **$0.00** (Free Tier) |
+| Production (1,000 orders) | **~$4.80** |
+| Per Order Cost | **$0.0048** |
+
+---
+
+## 🚀 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/products` | List all 50 products |
+| `POST` | `/orders` | Create new order |
+| `GET` | `/orders/user/{userId}` | Get user's orders |
+| `GET` | `/orders/id/{orderId}` | Get order by ID |
+| `GET` | `/admin/orders` | Get all orders |
+| `PUT` | `/admin/orders/{orderId}` | Update order status |
+
+**Base URL:** `https://kz2amymiqd.execute-api.us-east-1.amazonaws.com/prod`
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | React 18, CSS3, AWS Amplify v6 |
+| **Backend** | AWS Lambda (Python 3.12) |
+| **Database** | Amazon DynamoDB |
+| **Auth** | Amazon Cognito |
+| **API** | Amazon API Gateway |
+| **Hosting** | S3 + CloudFront |
+| **Maps** | Google Maps API |
 
 ---
 
@@ -140,23 +191,21 @@ CampusQuick solves the problem of urgent, short-distance delivery for campus con
 
 ```
 CampasQuick-Cloud_Delivery/
-├── frontend/                      # React application
-│   ├── public/
+├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── Auth.js            # Login/Register
-│   │   │   ├── Cart.js            # Shopping cart
-│   │   │   ├── Checkout.js        # Checkout form
+│   │   │   ├── Auth.js
+│   │   │   ├── Cart.js
+│   │   │   ├── Checkout.js
 │   │   │   ├── OrderConfirmation.js
-│   │   │   ├── AdminDashboard.js  # Admin panel
-│   │   │   ├── RunnerDashboard.js # Runner panel
-│   │   │   ├── MyOrders.js        # Order tracking
-│   │   │   ├── OrderTrackingMap.js # Google Maps
-│   │   │   └── SplashScreen.js    # Loading screen
-│   │   ├── App.js                 # Main app with search/filters
-│   │   ├── App.css                # Styling
-│   │   ├── aws-config.js          # Cognito config
-│   │   └── index.js
+│   │   │   ├── AdminDashboard.js
+│   │   │   ├── RunnerDashboard.js
+│   │   │   ├── MyOrders.js
+│   │   │   ├── OrderTrackingMap.js
+│   │   │   └── SplashScreen.js
+│   │   ├── App.js
+│   │   ├── App.css
+│   │   └── aws-config.js
 │   └── package.json
 ├── backend/
 │   └── lambda/
@@ -167,80 +216,9 @@ CampasQuick-Cloud_Delivery/
 │       ├── getAllOrders/
 │       └── updateOrderStatus/
 ├── docs/
-│   ├── architecture/
 │   └── progress-reports/
-├── .gitignore
-├── LICENSE
 └── README.md
 ```
-
----
-
-## 🛠️ Technology Stack
-
-### Frontend
-| Technology | Purpose |
-|------------|---------|
-| React 18 | UI framework |
-| AWS Amplify v6 | Cognito authentication |
-| Google Maps API | Delivery tracking |
-| CSS3 | Custom styling |
-
-### Backend
-| Technology | Purpose |
-|------------|---------|
-| AWS Lambda | Python 3.12 serverless functions |
-| API Gateway | REST API with CORS |
-| DynamoDB | NoSQL database with GSIs |
-| Cognito | User authentication |
-
-### Infrastructure
-| Technology | Purpose |
-|------------|---------|
-| S3 | Static website hosting |
-| CloudFront | CDN + HTTPS |
-| IAM | Security roles |
-
----
-
-## 📊 Database Schema
-
-### Products Table (50 items)
-```json
-{
-  "productId": "prod_001",
-  "name": "Red Bull Energy Drink",
-  "category": "Beverages",
-  "price": 3.99,
-  "stock": 50,
-  "imageUrl": "https://images.unsplash.com/...",
-  "description": "8.4 fl oz can - Wings when you need them"
-}
-```
-
-### Orders Table
-```json
-{
-  "orderId": "order_1738500000000",
-  "customerId": "cognito-user-id",
-  "items": [...],
-  "subtotal": 15.98,
-  "deliveryFee": 2.00,
-  "total": 17.98,
-  "deliveryAddress": "123 Dorm Hall",
-  "status": "pending",
-  "createdAt": 1738500000000
-}
-```
-
-**Order Status Flow:**
-```
-pending → accepted → picking → out_for_delivery → delivered
-```
-
-**Global Secondary Indexes:**
-- `customerId-index` - Query orders by customer
-- `status-index` - Query orders by status
 
 ---
 
@@ -248,61 +226,27 @@ pending → accepted → picking → out_for_delivery → delivered
 
 | Feature | Implementation |
 |---------|----------------|
-| Authentication | AWS Cognito with JWT tokens |
-| Authorization | Role-based (customers, admins, runners) |
-| Encryption at Rest | DynamoDB encryption (AWS managed) |
-| Encryption in Transit | HTTPS via CloudFront |
-| CORS | Configured for frontend origin |
-| IAM | Least-privilege Lambda roles |
+| Authentication | AWS Cognito (JWT tokens) |
+| Authorization | Role-based (3 user groups) |
+| Encryption at Rest | DynamoDB (AWS managed keys) |
+| Encryption in Transit | HTTPS (CloudFront) |
+| API Security | CORS, input validation |
+| IAM | Least-privilege policies |
 
 ---
 
-## 🚀 API Endpoints
+## 🔮 Future Enhancements
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/products` | List all 50 products |
-| POST | `/orders` | Create new order |
-| GET | `/orders/user/{userId}` | Get user's orders |
-| GET | `/orders/id/{orderId}` | Get order by ID |
-| GET | `/admin/orders` | Get all orders (admin) |
-| PUT | `/admin/orders/{orderId}` | Update order status |
-
----
-
-## 💰 Cost Analysis
-
-### Current (Development)
-| Service | Cost |
-|---------|------|
-| DynamoDB | $0.00 |
-| Lambda | $0.00 |
-| API Gateway | $0.00 |
-| S3 + CloudFront | $0.00 |
-| Cognito | $0.00 |
-| **Total** | **$0.00** |
-
-### Projected (1,000 orders/month)
-| Service | Cost |
-|---------|------|
-| All Services | ~$4.80/month |
-| **Per Order** | **$0.0048** |
-
----
-
-## 🧪 Quick Test
-
-```bash
-# Get all products
-curl https://kz2amymiqd.execute-api.us-east-1.amazonaws.com/prod/products
-
-# Response
-{
-  "success": true,
-  "count": 50,
-  "products": [...]
-}
-```
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| 💳 **Payment Integration** | Stripe/Square payment processing | High |
+| 📱 **Mobile App** | React Native iOS/Android app | High |
+| 🔔 **Push Notifications** | Real-time order updates via SNS | Medium |
+| 📧 **Email Notifications** | Order confirmation via SES | Medium |
+| 📈 **Analytics Dashboard** | Sales metrics and insights | Medium |
+| 🤖 **AI Recommendations** | Product suggestions via Personalize | Low |
+| 🎯 **Dynamic Pricing** | Surge pricing for peak hours | Low |
+| 🏪 **Multi-Store Support** | Multiple campus locations | Low |
 
 ---
 
@@ -310,9 +254,9 @@ curl https://kz2amymiqd.execute-api.us-east-1.amazonaws.com/prod/products
 
 | Pillar | Implementation |
 |--------|----------------|
-| **Operational Excellence** | CloudWatch monitoring, GitHub version control |
-| **Security** | Cognito auth, IAM roles, encryption, HTTPS |
-| **Reliability** | Multi-AZ DynamoDB, Lambda auto-retry |
+| **Operational Excellence** | CloudWatch logging, GitHub CI/CD ready |
+| **Security** | Cognito, IAM, encryption, HTTPS |
+| **Reliability** | Multi-AZ DynamoDB, Lambda retries |
 | **Performance** | CloudFront CDN, DynamoDB on-demand |
 | **Cost Optimization** | Serverless pay-per-use, free tier |
 
@@ -321,40 +265,43 @@ curl https://kz2amymiqd.execute-api.us-east-1.amazonaws.com/prod/products
 ## 👨‍💻 Author
 
 **Sumukh Pitre**  
-Northeastern University - MS in Informatics
+Master's in Informatics | Northeastern University
 
-| Contact | Link |
-|---------|------|
-| 📧 Email | pitre.s@northeastern.edu |
-| 💼 LinkedIn | [linkedin.com/in/sumukhpitre](https://linkedin.com/in/sumukhpitre) |
-| 🐙 GitHub | [github.com/SBitre](https://github.com/SBitre) |
+[![Email](https://img.shields.io/badge/Email-pitre.s%40northeastern.edu-red?logo=gmail)](mailto:pitre.s@northeastern.edu)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-sumukh048pitre-blue?logo=linkedin)](https://linkedin.com/in/sumukh048pitre)
+[![GitHub](https://img.shields.io/badge/GitHub-SBitre-black?logo=github)](https://github.com/SBitre)
 
 ---
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
+
+## 🙏 Acknowledgments
+
+- **Course:** ITC 6420 - Introduction to Cloud Computing
+- **University:** Northeastern University, Boston
+- **Framework:** AWS Well-Architected Framework
+
+---
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Products-50-blue" />
+  <img src="https://img.shields.io/badge/Lambda_Functions-6-orange" />
+  <img src="https://img.shields.io/badge/DynamoDB_Tables-3-green" />
+  <img src="https://img.shields.io/badge/User_Roles-3-purple" />
+  <img src="https://img.shields.io/badge/Cost-$0/month-brightgreen" />
+</p>
 
 <p align="center">
   <b>🛒 CampusQuick - Cloud-Powered Campus Convenience</b><br>
   <i>Delivering essentials to your dorm in 20-30 minutes</i>
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Products-50-blue" />
-  <img src="https://img.shields.io/badge/Lambda-6%20Functions-orange" />
-  <img src="https://img.shields.io/badge/DynamoDB-3%20Tables-green" />
-  <img src="https://img.shields.io/badge/Cognito-3%20Roles-purple" />
-</p>
-
 ---
 
-**Status:** 🟢 Live in Production  
-**Live URL:** https://d30albafirjxu4.cloudfront.net  
-**Demo Date:** February 9, 2025
-
----
-
-*Last Updated: February 2, 2025*
+**Project Status:** ✅ Completed  
+**Live URL:** [https://d30albafirjxu4.cloudfront.net](https://d30albafirjxu4.cloudfront.net)  
+**Completed:** February 8, 2025
