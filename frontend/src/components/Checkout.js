@@ -26,7 +26,7 @@ function Checkout({ cart, onSuccess, onCancel, userEmail }) {
 
     try {
       const orderData = {
-       customerId: userEmail,
+       customerId: userId,
         items: cart.map(item => ({
           productId: item.productId,
           quantity: item.quantity
