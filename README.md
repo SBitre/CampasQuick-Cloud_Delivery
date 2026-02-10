@@ -305,3 +305,22 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Project Status:** ✅ Completed  
 **Live URL:** [https://d30albafirjxu4.cloudfront.net](https://d30albafirjxu4.cloudfront.net)  
 **Completed:** February 8, 2025
+
+## 🤝 Contributing
+
+Contributions are welcome! This project won **Best Project Award** at Northeastern University.
+
+### How to Contribute:
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Open Issues:
+Check out our [open issues](https://github.com/SBitre/CampasQuick-Cloud_Delivery/issues) for features you can work on!
+
+### Priority Features Needed:
+- 💳 Payment Integration (Stripe)
+- 📧 Email Notifications (AWS SES)
+- 📱 Mobile App (React Native)
