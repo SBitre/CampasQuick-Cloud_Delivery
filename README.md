@@ -1,3 +1,9 @@
+![Status](https://img.shields.io/badge/Status-Live-brightgreen)
+![AWS](https://img.shields.io/badge/AWS-Serverless-orange?logo=amazon-aws)
+![Contributions](https://img.shields.io/badge/Contributions-Welcome-blue)
+
+
+
 # 🛒 CampusQuick - Serverless Hyperlocal Delivery Platform
 
 [![AWS](https://img.shields.io/badge/AWS-Serverless-orange?logo=amazon-aws)](https://aws.amazon.com/)
