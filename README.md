@@ -314,8 +314,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🤝 Contributing
 
-Contributions are welcome! This project won **Best Project Award** at Northeastern University.
-
+Contributions are welcome! 
 ### How to Contribute:
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
