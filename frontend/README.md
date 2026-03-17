@@ -25,6 +25,16 @@ https://kz2amymiqd.execute-api.us-east-1.amazonaws.com/prod/admin/orders
 *Try it in your browser! Returns JSON data.* ✨
 
 ---
+## Docker Setup
+
+### Frontend
+Build the image:
+docker build -t campusquick-frontend ./frontend
+
+Run the container:
+docker run -p 3000:80 campusquick-frontend
+
+Open http://localhost:3000
 
 ## 🎯 Project Overview
 

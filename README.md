@@ -28,7 +28,17 @@
 | 🚴 Runner | `runner@test.com` | `Runner123!` |
 
 ---
+## Docker Setup
 
+### Frontend
+Build the image:
+docker build -t campusquick-frontend ./frontend
+
+Run the container:
+docker run -p 3000:80 campusquick-frontend
+
+Open http://localhost:3000
+--
 ## 📋 Project Overview
 
 **CampusQuick** solves the problem of urgent, short-distance delivery for campus convenience stores. Students can order essentials (snacks, beverages, toiletries, etc.) and receive them within **20-30 minutes** from nearby stores.
