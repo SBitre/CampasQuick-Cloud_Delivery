@@ -16,16 +16,7 @@
 
 ---
 
-## 🚀 Live Demo
 
-### 🌐 **Live Application:** [https://d30albafirjxu4.cloudfront.net](https://d30albafirjxu4.cloudfront.net)
-
-### 🔐 **Test Accounts:**
-| Role | Email | Password |
-|------|-------|----------|
-| 👤 Customer | `customer@test.com` | `Test123!` |
-| 👔 Admin | `admin@test.com` | `Admin123!` |
-| 🚴 Runner | `runner@test.com` | `Runner123!` |
 
 ---
 ## Docker Setup
