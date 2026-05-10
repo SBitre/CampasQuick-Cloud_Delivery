@@ -28,7 +28,7 @@ docker build -t campusquick-frontend ./frontend
 Run the container:
 docker run -p 3000:80 campusquick-frontend
 
-Open http://localhost:3000
+
 --
 ## 📋 Project Overview
 
